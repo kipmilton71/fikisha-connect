@@ -14,16 +14,286 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      driver_profiles: {
+        Row: {
+          created_at: string | null
+          current_latitude: number | null
+          current_longitude: number | null
+          id: string
+          is_available: boolean | null
+          license_number: string | null
+          rating: number | null
+          total_deliveries: number | null
+          updated_at: string | null
+          vehicle_type: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_latitude?: number | null
+          current_longitude?: number | null
+          id: string
+          is_available?: boolean | null
+          license_number?: string | null
+          rating?: number | null
+          total_deliveries?: number | null
+          updated_at?: string | null
+          vehicle_type?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_latitude?: number | null
+          current_longitude?: number | null
+          id?: string
+          is_available?: boolean | null
+          license_number?: string | null
+          rating?: number | null
+          total_deliveries?: number | null
+          updated_at?: string | null
+          vehicle_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driver_profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          message: string
+          order_id: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          order_id?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          order_id?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_tracking: {
+        Row: {
+          driver_id: string
+          id: string
+          latitude: number
+          longitude: number
+          order_id: string
+          timestamp: string | null
+        }
+        Insert: {
+          driver_id: string
+          id?: string
+          latitude: number
+          longitude: number
+          order_id: string
+          timestamp?: string | null
+        }
+        Update: {
+          driver_id?: string
+          id?: string
+          latitude?: number
+          longitude?: number
+          order_id?: string
+          timestamp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_tracking_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "driver_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_tracking_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          confirmation_code: string
+          created_at: string | null
+          delivered_at: string | null
+          delivery_address: string
+          delivery_amount: number
+          delivery_latitude: number
+          delivery_longitude: number
+          driver_id: string | null
+          estimated_delivery_time: string | null
+          id: string
+          package_description: string | null
+          picked_up_at: string | null
+          pickup_address: string
+          pickup_latitude: number
+          pickup_longitude: number
+          receiver_name: string
+          receiver_phone: string
+          sender_id: string
+          status: Database["public"]["Enums"]["order_status"] | null
+          tracking_code: string
+          updated_at: string | null
+        }
+        Insert: {
+          confirmation_code: string
+          created_at?: string | null
+          delivered_at?: string | null
+          delivery_address: string
+          delivery_amount: number
+          delivery_latitude: number
+          delivery_longitude: number
+          driver_id?: string | null
+          estimated_delivery_time?: string | null
+          id?: string
+          package_description?: string | null
+          picked_up_at?: string | null
+          pickup_address: string
+          pickup_latitude: number
+          pickup_longitude: number
+          receiver_name: string
+          receiver_phone: string
+          sender_id: string
+          status?: Database["public"]["Enums"]["order_status"] | null
+          tracking_code: string
+          updated_at?: string | null
+        }
+        Update: {
+          confirmation_code?: string
+          created_at?: string | null
+          delivered_at?: string | null
+          delivery_address?: string
+          delivery_amount?: number
+          delivery_latitude?: number
+          delivery_longitude?: number
+          driver_id?: string | null
+          estimated_delivery_time?: string | null
+          id?: string
+          package_description?: string | null
+          picked_up_at?: string | null
+          pickup_address?: string
+          pickup_latitude?: number
+          pickup_longitude?: number
+          receiver_name?: string
+          receiver_phone?: string
+          sender_id?: string
+          status?: Database["public"]["Enums"]["order_status"] | null
+          tracking_code?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "driver_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          full_name: string
+          id: string
+          is_active: boolean | null
+          phone_number: string | null
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          full_name: string
+          id: string
+          is_active?: boolean | null
+          phone_number?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          full_name?: string
+          id?: string
+          is_active?: boolean | null
+          phone_number?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_confirmation_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_tracking_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
-      [_ in never]: never
+      order_status:
+        | "pending"
+        | "accepted"
+        | "picked_up"
+        | "out_for_delivery"
+        | "delivered"
+        | "cancelled"
+      user_role: "customer" | "driver"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +420,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      order_status: [
+        "pending",
+        "accepted",
+        "picked_up",
+        "out_for_delivery",
+        "delivered",
+        "cancelled",
+      ],
+      user_role: ["customer", "driver"],
+    },
   },
 } as const
