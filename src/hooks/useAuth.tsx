@@ -7,7 +7,7 @@ interface Profile {
   id: string;
   full_name: string;
   phone_number?: string;
-  role: 'customer' | 'driver';
+  role: 'customer' | 'driver' | 'admin';
   avatar_url?: string;
   is_active: boolean;
 }
@@ -17,7 +17,7 @@ interface AuthContextType {
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
-  signUp: (email: string, password: string, fullName: string, role: 'customer' | 'driver') => Promise<{ error: any }>;
+  signUp: (email: string, password: string, fullName: string, role: 'customer' | 'driver' | 'admin') => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<Profile>) => Promise<{ error: any }>;
@@ -78,7 +78,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, fullName: string, role: 'customer' | 'driver') => {
+  const signUp = async (email: string, password: string, fullName: string, role: 'customer' | 'driver' | 'admin') => {
     try {
       const redirectUrl = `${window.location.origin}/`;
       

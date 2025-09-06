@@ -164,6 +164,9 @@ export type Database = {
           estimated_delivery_time: string | null
           id: string
           package_description: string | null
+          payment_method: string | null
+          payment_reference: string | null
+          payment_status: string | null
           picked_up_at: string | null
           pickup_address: string
           pickup_latitude: number
@@ -172,6 +175,7 @@ export type Database = {
           receiver_phone: string
           sender_id: string
           status: Database["public"]["Enums"]["order_status"] | null
+          total_amount: number | null
           tracking_code: string
           updated_at: string | null
         }
@@ -187,6 +191,9 @@ export type Database = {
           estimated_delivery_time?: string | null
           id?: string
           package_description?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          payment_status?: string | null
           picked_up_at?: string | null
           pickup_address: string
           pickup_latitude: number
@@ -195,6 +202,7 @@ export type Database = {
           receiver_phone: string
           sender_id: string
           status?: Database["public"]["Enums"]["order_status"] | null
+          total_amount?: number | null
           tracking_code: string
           updated_at?: string | null
         }
@@ -210,6 +218,9 @@ export type Database = {
           estimated_delivery_time?: string | null
           id?: string
           package_description?: string | null
+          payment_method?: string | null
+          payment_reference?: string | null
+          payment_status?: string | null
           picked_up_at?: string | null
           pickup_address?: string
           pickup_latitude?: number
@@ -218,6 +229,7 @@ export type Database = {
           receiver_phone?: string
           sender_id?: string
           status?: Database["public"]["Enums"]["order_status"] | null
+          total_amount?: number | null
           tracking_code?: string
           updated_at?: string | null
         }
@@ -271,11 +283,56 @@ export type Database = {
         }
         Relationships: []
       }
+      ratings: {
+        Row: {
+          comment: string | null
+          created_at: string
+          customer_id: string
+          driver_id: string
+          id: string
+          order_id: string
+          rating: number
+          updated_at: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          customer_id: string
+          driver_id: string
+          id?: string
+          order_id: string
+          rating: number
+          updated_at?: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          customer_id?: string
+          driver_id?: string
+          id?: string
+          order_id?: string
+          rating?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ratings_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      calculate_driver_rating: {
+        Args: { driver_user_id: string }
+        Returns: number
+      }
       generate_confirmation_code: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -293,7 +350,7 @@ export type Database = {
         | "out_for_delivery"
         | "delivered"
         | "cancelled"
-      user_role: "customer" | "driver"
+      user_role: "customer" | "driver" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -429,7 +486,7 @@ export const Constants = {
         "delivered",
         "cancelled",
       ],
-      user_role: ["customer", "driver"],
+      user_role: ["customer", "driver", "admin"],
     },
   },
 } as const

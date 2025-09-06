@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
 import { LogOut, User, Settings } from 'lucide-react';
+import NotificationCenter from './NotificationCenter';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -46,8 +47,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <h1 className="text-xl font-bold text-primary">Fikisha</h1>
             </div>
 
-            {/* User Menu */}
-            <DropdownMenu>
+            {/* Notifications and User Menu */}
+            <div className="flex items-center gap-2">
+              <NotificationCenter />
+              <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                   <Avatar className="h-8 w-8">
@@ -86,6 +89,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            </div>
           </div>
         </div>
       </header>

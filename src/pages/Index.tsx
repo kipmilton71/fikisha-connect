@@ -3,6 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import Layout from '@/components/Layout';
 import CustomerDashboard from '@/components/CustomerDashboard';
 import DriverDashboard from '@/components/DriverDashboard';
+import AdminDashboard from '@/components/AdminDashboard';
 
 const Index = () => {
   const { profile } = useAuth();
@@ -17,9 +18,21 @@ const Index = () => {
     );
   }
 
+  const renderDashboard = () => {
+    switch (profile.role) {
+      case 'admin':
+        return <AdminDashboard />;
+      case 'driver':
+        return <DriverDashboard />;
+      case 'customer':
+      default:
+        return <CustomerDashboard />;
+    }
+  };
+
   return (
     <Layout>
-      {profile.role === 'driver' ? <DriverDashboard /> : <CustomerDashboard />}
+      {renderDashboard()}
     </Layout>
   );
 };
