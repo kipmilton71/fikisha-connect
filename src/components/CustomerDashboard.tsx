@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Package, MapPin, Clock, Truck, Star, CreditCard } from 'lucide-react';
+import { Plus, Package, MapPin, Clock, Truck, Star, CreditCard, MessageCircle, Phone } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -11,6 +11,7 @@ import CreateOrderDialog from './CreateOrderDialog';
 import TrackOrderDialog from './TrackOrderDialog';
 import PaymentDialog from './PaymentDialog';
 import RatingDialog from './RatingDialog';
+import OrderChatDialog from './OrderChatDialog';
 
 const CustomerDashboard = () => {
   const [orders, setOrders] = useState<any[]>([]);
@@ -22,6 +23,7 @@ const CustomerDashboard = () => {
   const [showTrackOrder, setShowTrackOrder] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
   const [showRating, setShowRating] = useState(false);
+  const [showChat, setShowChat] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
@@ -89,6 +91,11 @@ const CustomerDashboard = () => {
   const handleRateOrder = (order: any) => {
     setSelectedOrder(order);
     setShowRating(true);
+  };
+
+  const handleChatWithDriver = (order: any) => {
+    setSelectedOrder(order);
+    setShowChat(true);
   };
 
   const getStatusColor = (status: string) => {
@@ -242,7 +249,7 @@ const CustomerDashboard = () => {
                           )}
                         </div>
                         
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 flex-wrap">
                           <Button
                             variant="outline"
                             size="sm"
@@ -251,6 +258,27 @@ const CustomerDashboard = () => {
                             <MapPin className="h-4 w-4 mr-2" />
                             Track
                           </Button>
+                          
+                          {order.driver_id && ['accepted', 'picked_up', 'out_for_delivery'].includes(order.status) && (
+                            <>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleChatWithDriver(order)}
+                              >
+                                <MessageCircle className="h-4 w-4 mr-2" />
+                                Chat
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => window.open(`tel:${order.driver_phone || 'N/A'}`)}
+                              >
+                                <Phone className="h-4 w-4 mr-2" />
+                                Call
+                              </Button>
+                            </>
+                          )}
                           
                           {order.payment_status !== 'paid' && (
                             <Button
@@ -360,6 +388,17 @@ const CustomerDashboard = () => {
         orderId={selectedOrder?.id}
         driverId={selectedOrder?.driver_id}
         driverName="Driver" // We'll need to fetch this from profiles
+      />
+
+      <OrderChatDialog 
+        open={showChat} 
+        onOpenChange={setShowChat}
+        order={selectedOrder}
+        otherParty={{
+          id: selectedOrder?.driver_id || '',
+          name: selectedOrder?.driver_name || 'Driver',
+          phone: selectedOrder?.driver_phone || 'N/A'
+        }}
       />
     </div>
   );

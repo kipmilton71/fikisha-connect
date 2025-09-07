@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      chat_messages: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          order_id: string
+          receiver_id: string
+          sender_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          order_id: string
+          receiver_id: string
+          sender_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          order_id?: string
+          receiver_id?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       driver_applications: {
         Row: {
           application_status: string
@@ -258,6 +296,9 @@ export type Database = {
           pickup_address: string
           pickup_latitude: number
           pickup_longitude: number
+          product_category: string | null
+          product_value: number | null
+          product_weight: number | null
           receiver_name: string
           receiver_phone: string
           sender_id: string
@@ -285,6 +326,9 @@ export type Database = {
           pickup_address: string
           pickup_latitude: number
           pickup_longitude: number
+          product_category?: string | null
+          product_value?: number | null
+          product_weight?: number | null
           receiver_name: string
           receiver_phone: string
           sender_id: string
@@ -312,6 +356,9 @@ export type Database = {
           pickup_address?: string
           pickup_latitude?: number
           pickup_longitude?: number
+          product_category?: string | null
+          product_value?: number | null
+          product_weight?: number | null
           receiver_name?: string
           receiver_phone?: string
           sender_id?: string

@@ -25,6 +25,9 @@ const CreateOrderDialog: React.FC<CreateOrderDialogProps> = ({ open, onOpenChang
   const [pickupAddress, setPickupAddress] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [packageDescription, setPackageDescription] = useState('');
+  const [productCategory, setProductCategory] = useState('');
+  const [productValue, setProductValue] = useState('');
+  const [productWeight, setProductWeight] = useState('');
   const [deliveryAmount, setDeliveryAmount] = useState('');
 
   const resetForm = () => {
@@ -33,6 +36,9 @@ const CreateOrderDialog: React.FC<CreateOrderDialogProps> = ({ open, onOpenChang
     setPickupAddress('');
     setDeliveryAddress('');
     setPackageDescription('');
+    setProductCategory('');
+    setProductValue('');
+    setProductWeight('');
     setDeliveryAmount('');
   };
 
@@ -63,6 +69,9 @@ const CreateOrderDialog: React.FC<CreateOrderDialogProps> = ({ open, onOpenChang
           delivery_latitude: deliveryLat,
           delivery_longitude: deliveryLng,
           package_description: packageDescription || '',
+          product_category: productCategory,
+          product_value: productValue ? parseFloat(productValue) : null,
+          product_weight: productWeight ? parseFloat(productWeight) : null,
           delivery_amount: parseFloat(deliveryAmount)
         } as any)
         .select()
@@ -163,16 +172,70 @@ const CreateOrderDialog: React.FC<CreateOrderDialogProps> = ({ open, onOpenChang
           {/* Package Details */}
           <div className="space-y-3">
             <h3 className="font-semibold text-sm">Package Details</h3>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label htmlFor="product-category">Category *</Label>
+                <select
+                  id="product-category"
+                  value={productCategory}
+                  onChange={(e) => setProductCategory(e.target.value)}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  required
+                >
+                  <option value="">Select category</option>
+                  <option value="documents">Documents</option>
+                  <option value="electronics">Electronics</option>
+                  <option value="furniture">Furniture</option>
+                  <option value="grocery">Grocery</option>
+                  <option value="clothing">Clothing</option>
+                  <option value="books">Books</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="product-weight">Weight (kg) *</Label>
+                <Input
+                  id="product-weight"
+                  type="number"
+                  min="0.1"
+                  step="0.1"
+                  value={productWeight}
+                  onChange={(e) => setProductWeight(e.target.value)}
+                  placeholder="2.5"
+                  required
+                />
+              </div>
+            </div>
+            
             <div className="space-y-2">
-              <Label htmlFor="package-description">Package Description</Label>
+              <Label htmlFor="product-value">Estimated Value (KSh)</Label>
+              <Input
+                id="product-value"
+                type="number"
+                min="0"
+                step="100"
+                value={productValue}
+                onChange={(e) => setProductValue(e.target.value)}
+                placeholder="5000"
+              />
+              <p className="text-xs text-muted-foreground">
+                Optional - for insurance purposes
+              </p>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="package-description">Additional Description</Label>
               <Textarea
                 id="package-description"
                 value={packageDescription}
                 onChange={(e) => setPackageDescription(e.target.value)}
-                placeholder="Documents, Electronics, Food, etc."
-                rows={3}
+                placeholder="Any special handling instructions..."
+                rows={2}
               />
             </div>
+            
             <div className="space-y-2">
               <Label htmlFor="delivery-amount">Delivery Amount (KSh) *</Label>
               <Input

@@ -12,16 +12,20 @@ import {
   Clock, 
   DollarSign,
   CheckCircle,
-  Phone
+  Phone,
+  MessageCircle,
+  Weight
 } from 'lucide-react';
 import OrderDetailsDialog from '@/components/OrderDetailsDialog';
 import DeliveryConfirmationDialog from '@/components/DeliveryConfirmationDialog';
+import OrderChatDialog from '@/components/OrderChatDialog';
 
 const DriverDashboard = () => {
   const [isAvailable, setIsAvailable] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
   const [showDeliveryConfirmation, setShowDeliveryConfirmation] = useState(false);
+  const [showChat, setShowChat] = useState(false);
 
   // Mock data - will be replaced with real data
   const availableOrders = [
@@ -37,6 +41,8 @@ const DriverDashboard = () => {
       delivery_latitude: -1.2634,
       delivery_longitude: 36.8050,
       package_description: 'Documents package',
+      product_category: 'documents',
+      product_weight: 0.5,
       delivery_amount: 250,
       distance: '2.5 km',
       created_at: '2024-01-15T10:30:00Z'
@@ -53,6 +59,8 @@ const DriverDashboard = () => {
       delivery_latitude: -1.3197,
       delivery_longitude: 36.7025,
       package_description: 'Electronics',
+      product_category: 'electronics',
+      product_weight: 1.2,
       delivery_amount: 350,
       distance: '4.2 km',
       created_at: '2024-01-14T14:20:00Z'
@@ -68,9 +76,14 @@ const DriverDashboard = () => {
       pickup_address: 'Town Center Mall',
       delivery_address: 'Kilimani Heights',
       package_description: 'Fashion items',
+      product_category: 'clothing',
+      product_weight: 0.8,
       delivery_amount: 400,
       status: 'picked_up',
-      confirmation_code: 'ABC123'
+      confirmation_code: 'ABC123',
+      sender_id: '123',
+      sender_name: 'Mike Johnson',
+      sender_phone: '+254700111222'
     }
   ];
 
@@ -94,6 +107,11 @@ const DriverDashboard = () => {
   const handleCompleteDelivery = (order: any) => {
     setSelectedOrder(order);
     setShowDeliveryConfirmation(true);
+  };
+
+  const handleChatWithCustomer = (order: any) => {
+    setSelectedOrder(order);
+    setShowChat(true);
   };
 
   return (
@@ -198,7 +216,13 @@ const DriverDashboard = () => {
                           <h4 className="font-semibold text-lg">KSh {order.delivery_amount}</h4>
                           <p className="text-sm text-muted-foreground">{order.distance} • {order.tracking_code}</p>
                         </div>
-                        <Badge variant="outline">{order.package_description}</Badge>
+                        <div className="flex gap-2">
+                          <Badge variant="outline">{order.product_category}</Badge>
+                          <Badge variant="secondary" className="flex items-center gap-1">
+                            <Weight className="h-3 w-3" />
+                            {order.product_weight}kg
+                          </Badge>
+                        </div>
                       </div>
                       
                       <div className="space-y-2">
@@ -279,7 +303,13 @@ const DriverDashboard = () => {
                           {order.status === 'picked_up' ? 'Picked Up' : 'Out for Delivery'}
                         </Badge>
                       </div>
-                      <Badge variant="outline">{order.package_description}</Badge>
+                      <div className="flex gap-2">
+                        <Badge variant="outline">{order.product_category}</Badge>
+                        <Badge variant="secondary" className="flex items-center gap-1">
+                          <Weight className="h-3 w-3" />
+                          {order.product_weight}kg
+                        </Badge>
+                      </div>
                     </div>
                     
                     <div className="space-y-2">
@@ -297,17 +327,25 @@ const DriverDashboard = () => {
                       <Button 
                         variant="outline" 
                         size="sm"
-                        className="flex-1"
+                        onClick={() => window.open(`tel:${order.receiver_phone}`)}
                       >
                         <Phone className="h-4 w-4 mr-2" />
-                        Call Customer
+                        Call
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleChatWithCustomer(order)}
+                      >
+                        <MessageCircle className="h-4 w-4 mr-2" />
+                        Chat
                       </Button>
                       <Button 
                         onClick={() => handleCompleteDelivery(order)}
                         size="sm"
                         className="flex-1"
                       >
-                        Complete Delivery
+                        Complete
                       </Button>
                     </div>
                   </div>
@@ -338,6 +376,17 @@ const DriverDashboard = () => {
         open={showDeliveryConfirmation} 
         onOpenChange={setShowDeliveryConfirmation}
         order={selectedOrder}
+      />
+      
+      <OrderChatDialog 
+        open={showChat} 
+        onOpenChange={setShowChat}
+        order={selectedOrder}
+        otherParty={{
+          id: selectedOrder?.sender_id || '',
+          name: selectedOrder?.sender_name || 'Customer',
+          phone: selectedOrder?.sender_phone || selectedOrder?.receiver_phone || ''
+        }}
       />
     </div>
   );
