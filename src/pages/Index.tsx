@@ -4,9 +4,14 @@ import Layout from '@/components/Layout';
 import CustomerDashboard from '@/components/CustomerDashboard';
 import DriverDashboard from '@/components/DriverDashboard';
 import AdminDashboard from '@/components/AdminDashboard';
+import { Navigate } from 'react-router-dom';
 
 const Index = () => {
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
+
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
 
   if (!profile) {
     return (

@@ -130,10 +130,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
         }
 
-        toast({
-          title: "Success!",
-          description: "Account created successfully. Please check your email to verify your account."
-        });
+        // Post-signup redirect logic: if driver, go to driver-application; else to home
+        if (role === 'driver') {
+          window.location.replace('/driver-application');
+        } else {
+          toast({
+            title: "Success!",
+            description: "Account created successfully. Please check your email to verify your account."
+          });
+          window.location.replace('/');
+        }
       }
 
       return { error: null };
