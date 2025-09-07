@@ -132,38 +132,92 @@ const DriverApplicationForm: React.FC<DriverApplicationFormProps> = ({ onSuccess
         toast.error('Please log in to submit application');
         return;
       }
-      const { data: existingProfile, error: profileCheckError } = await supabase
-        .from('profiles')
+
+      // Check if user already has a driver application
+      const { data: existingApplication, error: applicationCheckError } = await supabase
+        .from('driver_applications')
         .select('*')
-        .eq('id', user.id)
+        .eq('user_id', user.id)
         .single();
-      if (profileCheckError && profileCheckError.code !== 'PGRST116') {
-        console.error('Error checking profile:', profileCheckError);
-        toast.error('Failed to check profile. Please try again.');
+      
+      if (applicationCheckError && applicationCheckError.code !== 'PGRST116') {
+        console.error('Error checking application:', applicationCheckError);
+        toast.error('Failed to check existing application. Please try again.');
         return;
       }
+
+      if (existingApplication) {
+        toast.error('You have already submitted a driver application. Please wait for review.');
+        return;
+      }
+
+      // Prepare comprehensive application data
       const applicationData = {
+        user_id: user.id,
+        partner_type: formData.partnerType,
+        vehicle_types: formData.vehicleTypes,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        language_preference: formData.languagePreference,
+        phone_number: formData.phoneNumber,
+        email: formData.email,
+        referral_code: formData.referralCode,
+        company_name: formData.companyName,
+        company_registration_number: formData.companyRegistrationNumber,
+        number_of_drivers: formData.numberOfDrivers,
+        vehicles: formData.vehicles as any,
+        billing_type: formData.billingType,
+        mpesa_account_name: formData.mpesaAccountName,
+        mpesa_phone_number: formData.mpesaPhoneNumber,
+        physical_address: formData.physicalAddress,
+        consent_given: formData.consentGiven,
+        application_status: 'pending'
+      };
+
+      // Insert comprehensive driver application
+      const { error: applicationError } = await supabase
+        .from('driver_applications')
+        .insert(applicationData);
+
+      if (applicationError) {
+        console.error('Error submitting driver application:', applicationError);
+        toast.error('Failed to submit driver application. Please try again.');
+        return;
+      }
+
+      // Update or create basic profile with driver role
+      const profileData = {
         id: user.id,
         full_name: `${formData.firstName} ${formData.lastName}`,
         phone_number: formData.phoneNumber,
         role: 'driver' as const,
-        is_active: false,
-        status: 'pending_approval' as const,
-      } as any;
-      const { error } = await supabase.from('profiles').upsert(applicationData);
-      if (error) {
-        console.error('Error submitting application:', error);
-        toast.error('Failed to submit application. Please try again.');
-        return;
+        is_active: false
+      };
+
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert(profileData);
+
+      if (profileError) {
+        console.error('Error updating profile:', profileError);
+        // Don't fail the entire process if profile update fails
       }
-      const { error: notificationError } = await supabase.from('notifications').insert({
-        user_id: user.id,
-        title: 'New Driver Application',
-        message: `Driver application from ${formData.firstName} ${formData.lastName}`,
-        type: 'driver_application',
-      } as any);
-      if (notificationError) console.error('Error creating notification:', notificationError);
-      toast.success('Application submitted successfully! We will review and contact you soon.');
+
+      // Create notification for admin review
+      const { error: notificationError } = await supabase
+        .from('notifications')
+        .insert({
+          user_id: user.id,
+          title: 'New Driver Application Submitted',
+          message: `Driver application from ${formData.firstName} ${formData.lastName} requires review`,
+          type: 'driver_application',
+        });
+
+      if (notificationError) {
+        console.error('Error creating notification:', notificationError);
+      }
+
+      toast.success('Driver application submitted successfully! We will review your application and contact you soon.');
       onSuccess?.();
     } catch (error) {
       console.error('Submission error:', error);

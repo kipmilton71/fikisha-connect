@@ -14,6 +14,93 @@ export type Database = {
   }
   public: {
     Tables: {
+      driver_applications: {
+        Row: {
+          application_status: string
+          billing_type: string
+          company_name: string | null
+          company_registration_number: string | null
+          consent_given: boolean
+          created_at: string
+          email: string
+          first_name: string
+          id: string
+          language_preference: string | null
+          last_name: string
+          mpesa_account_name: string
+          mpesa_phone_number: string
+          number_of_drivers: string | null
+          partner_type: string
+          phone_number: string
+          physical_address: string
+          referral_code: string | null
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          submitted_at: string
+          updated_at: string
+          user_id: string
+          vehicle_types: string[]
+          vehicles: Json
+        }
+        Insert: {
+          application_status?: string
+          billing_type: string
+          company_name?: string | null
+          company_registration_number?: string | null
+          consent_given?: boolean
+          created_at?: string
+          email: string
+          first_name: string
+          id?: string
+          language_preference?: string | null
+          last_name: string
+          mpesa_account_name: string
+          mpesa_phone_number: string
+          number_of_drivers?: string | null
+          partner_type: string
+          phone_number: string
+          physical_address: string
+          referral_code?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          submitted_at?: string
+          updated_at?: string
+          user_id: string
+          vehicle_types: string[]
+          vehicles?: Json
+        }
+        Update: {
+          application_status?: string
+          billing_type?: string
+          company_name?: string | null
+          company_registration_number?: string | null
+          consent_given?: boolean
+          created_at?: string
+          email?: string
+          first_name?: string
+          id?: string
+          language_preference?: string | null
+          last_name?: string
+          mpesa_account_name?: string
+          mpesa_phone_number?: string
+          number_of_drivers?: string | null
+          partner_type?: string
+          phone_number?: string
+          physical_address?: string
+          referral_code?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          submitted_at?: string
+          updated_at?: string
+          user_id?: string
+          vehicle_types?: string[]
+          vehicles?: Json
+        }
+        Relationships: []
+      }
       driver_profiles: {
         Row: {
           created_at: string | null
