@@ -271,7 +271,7 @@ const DriverApplicationForm: React.FC<DriverApplicationFormProps> = ({ onSuccess
                       <Input id="regNumber" value={formData.companyRegistrationNumber} onChange={(e) => handleInputChange('companyRegistrationNumber', e.target.value)} required />
                     </div>
                     <div>
-                      <Label htmlFor="driverCount">Number of Drivers in Fleet *</nLabel>
+                      <Label htmlFor="driverCount">Number of Drivers in Fleet *</Label>
                       <Input id="driverCount" type="number" value={formData.numberOfDrivers} onChange={(e) => handleInputChange('numberOfDrivers', e.target.value)} required />
                     </div>
                   </div>
